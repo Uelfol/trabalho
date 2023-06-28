@@ -29,7 +29,7 @@ def valid_location(board, column):
 
 # ----------------------------------------------------------------------------------
 def drop_piece(board, column, piece):
-    for r in range(ROWS-1, -1, -1):  # Troquei a ordem da lista, para começar de baixo
+    for r in range(ROWS - 1, -1, -1):  # Troquei a ordem da lista, para começar de baixo
         if board[r][column] == 0:
             board[r][column] = piece
             return
@@ -58,6 +58,25 @@ def is_winning_move(board, piece):
             if board[r][c] == piece and board[r - 1][c + 1] == piece and board[r - 2][c + 2] == piece and board[r - 3][
                 c + 3] == piece:
                 return True
+
+
+def window_score(window, piece):  # Baseado no conceito das sliding windows das CNNs
+    score = 0  # Vamos definir a pontuação de acordo com a quantidade de peças na janela
+    adversary = 1  # Por padrão o adversario será o jogador
+    if adversary == piece:
+        adversary = 2  # Caso a peça seja do jogador, setamos o adversario para a IA (2)
+
+    if window.count(piece) == 4:
+        score += 100  # Ganha o jogo
+    elif window.count(piece) == 3 and window.count(0) == 1:
+        score += 5  # TODO: Ajustar depois esses scores
+    elif window.count(piece) == 2 and window.count(0) == 2:
+        score += 2  # TODO: Ajustar depois esses scores
+
+    if window.count(adversary) == 3 and window.count(0) == 1:
+        score -= 4  # TODO: Talvez adicionar mais um nível de penalidade para adversary == 2 and 0 == 2
+
+    return score
 
 
 # ----------------------------------------------------------------------------------
@@ -128,7 +147,7 @@ while not game_over:
 
     # Movimento da IA
     else:
-        col, minimax_score = minimax(board, 4, True)
+        col, minimax_score = minimax(board, 4, True)  # A profundidade máxima da árvore é 4
         if valid_location(board, col):
             drop_piece(board, col, 2)
             if is_winning_move(board, 2):
