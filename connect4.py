@@ -4,6 +4,9 @@ from os import system, name
 ROWS = 6
 COLUMNS = 7
 
+KERNEL_SIZE = 4  # Tamanho da janela que vai se mover pelo tabuleiro
+STRIDE = 1  # Passo com o qual a janela vai se mover
+
 
 # ----------------------------------------------------------------------------------
 def clear():
@@ -79,6 +82,17 @@ def window_score(window, piece):  # Baseado no conceito das sliding windows das 
     return score
 
 
+def sliding_windows(board, piece):
+    score = 0
+
+    for r in range(0, ROWS - KERNEL_SIZE + 1, STRIDE):
+        for c in range(0, COLUMNS - KERNEL_SIZE + 1, STRIDE):
+            window = board[r:r+KERNEL_SIZE, c:c+KERNEL_SIZE]
+            # score += window_score(window, piece)
+            print('i')
+    return score
+
+
 # ----------------------------------------------------------------------------------
 def minimax(board, depth, maximizing_player):
     if is_winning_move(board, 2):  # IA ganhou
@@ -88,7 +102,7 @@ def minimax(board, depth, maximizing_player):
     elif len(get_valid_locations(board)) == 0:  # jogo empatado
         return (None, 0)
     elif depth == 0:  # profundidade máxima atingida
-        return (None, 0)
+        return (None, sliding_windows(board, 2))
 
     valid_locations = get_valid_locations(board)
     if maximizing_player:
