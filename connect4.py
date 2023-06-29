@@ -69,27 +69,40 @@ def window_score(window, piece):  # Baseado no conceito das sliding windows das 
     if adversary == piece:
         adversary = 2  # Caso a peça seja do jogador, setamos o adversario para a IA (2)
 
-    if window.count(piece) == 4:
-        score += 100  # Ganha o jogo
-    elif window.count(piece) == 3 and window.count(0) == 1:
-        score += 5  # TODO: Ajustar depois esses scores
-    elif window.count(piece) == 2 and window.count(0) == 2:
-        score += 2  # TODO: Ajustar depois esses scores
+    for r in range(KERNEL_SIZE):  # Verifica na horizontal a presença das peças
+        if np.count_nonzero(window[r,:] == piece) == 4:
+            score += 100
+        elif np.count_nonzero(window[r,:] == piece) == 3 and np.count_nonzero(window[r,:] == 0) == 1:
+            score += 5
+        elif np.count_nonzero(window[r, :] == piece) == 2 and np.count_nonzero(window[r, :] == 0) == 2:
+            score += 2
 
-    if window.count(adversary) == 3 and window.count(0) == 1:
-        score -= 4  # TODO: Talvez adicionar mais um nível de penalidade para adversary == 2 and 0 == 2
+        if np.count_nonzero(window[r, :] == adversary) == 3 and np.count_nonzero(window[r, :] == 0) == 1:
+            score -= 4
 
+    for c in range(KERNEL_SIZE):  # Verifica na vertical a presença das peças
+        if np.count_nonzero(window[:, c] == piece) == 4:
+            score += 100
+        elif np.count_nonzero(window[:, c] == piece) == 3 and np.count_nonzero(window[:, c] == 0) == 1:
+            score += 5
+        elif np.count_nonzero(window[:, c] == piece) == 2 and np.count_nonzero(window[:, c] == 0) == 2:
+            score += 2
+
+        if np.count_nonzero(window[:, c] == adversary) == 3 and np.count_nonzero(window[:, c] == 0) == 1:
+            score -= 4
+    # TODO: Adicionar a contagem de pontos para a diagonal
+    # https://numpy.org/doc/stable/reference/generated/numpy.diagonal.html
     return score
 
 
 def sliding_windows(board, piece):
     score = 0
 
-    for r in range(0, ROWS - KERNEL_SIZE + 1, STRIDE):
+    for r in range(ROWS - KERNEL_SIZE, -1, -STRIDE):
         for c in range(0, COLUMNS - KERNEL_SIZE + 1, STRIDE):
             window = board[r:r+KERNEL_SIZE, c:c+KERNEL_SIZE]
-            # score += window_score(window, piece)
-            print('i')
+            score += window_score(window, piece)
+            # print('i')
     return score
 
 
