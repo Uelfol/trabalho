@@ -70,9 +70,9 @@ def window_score(window, piece):  # Baseado no conceito das sliding windows das 
         adversary = 2  # Caso a peça seja do jogador, setamos o adversario para a IA (2)
 
     for r in range(KERNEL_SIZE):  # Verifica na horizontal a presença das peças
-        if np.count_nonzero(window[r,:] == piece) == 4:
+        if np.count_nonzero(window[r, :] == piece) == 4:
             score += 100
-        elif np.count_nonzero(window[r,:] == piece) == 3 and np.count_nonzero(window[r,:] == 0) == 1:
+        elif np.count_nonzero(window[r, :] == piece) == 3 and np.count_nonzero(window[r, :] == 0) == 1:
             score += 5
         elif np.count_nonzero(window[r, :] == piece) == 2 and np.count_nonzero(window[r, :] == 0) == 2:
             score += 2
@@ -92,6 +92,29 @@ def window_score(window, piece):  # Baseado no conceito das sliding windows das 
             score -= 4
     # TODO: Adicionar a contagem de pontos para a diagonal
     # https://numpy.org/doc/stable/reference/generated/numpy.diagonal.html
+
+    main_diagonal = window.diagonal()  # Diagonal principal
+    second_diagonal = np.fliplr(window).diagonal()  # Diagonal secundaria
+
+    if np.count_nonzero(main_diagonal == piece) == 4:
+        score += 100
+    elif np.count_nonzero(main_diagonal == piece) == 3 and np.count_nonzero(main_diagonal == 0) == 1:
+        score += 5
+    elif np.count_nonzero(main_diagonal == piece) == 2 and np.count_nonzero(main_diagonal == 0) == 2:
+        score += 2
+    if np.count_nonzero(main_diagonal == adversary) == 3 and np.count_nonzero(main_diagonal == 0) == 1:
+        score -= 4
+
+    if np.count_nonzero(second_diagonal == piece) == 4:
+        score += 100
+    elif np.count_nonzero(second_diagonal == piece) == 3 and np.count_nonzero(second_diagonal == 0) == 1:
+        score += 5
+    elif np.count_nonzero(second_diagonal == piece) == 2 and np.count_nonzero(second_diagonal == 0) == 2:
+        score += 2
+    if np.count_nonzero(second_diagonal == adversary) == 3 and np.count_nonzero(second_diagonal == 0) == 1:
+        score -= 4
+    print('f')
+
     return score
 
 
@@ -100,7 +123,7 @@ def sliding_windows(board, piece):
 
     for r in range(ROWS - KERNEL_SIZE, -1, -STRIDE):
         for c in range(0, COLUMNS - KERNEL_SIZE + 1, STRIDE):
-            window = board[r:r+KERNEL_SIZE, c:c+KERNEL_SIZE]
+            window = board[r:r + KERNEL_SIZE, c:c + KERNEL_SIZE]
             score += window_score(window, piece)
             # print('i')
     return score
