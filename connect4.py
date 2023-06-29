@@ -66,55 +66,45 @@ def is_winning_move(board, piece):
 def window_score(window, piece):  # Baseado no conceito das sliding windows das CNNs
     score = 0  # Vamos definir a pontuação de acordo com a quantidade de peças na janela
     adversary = 1  # Por padrão o adversario será o jogador
+
+    conditions = [
+        ((4, 0), 100),
+        ((3, 1), 5),
+        ((2, 2), 2),
+        ((3, 1), - 4)
+    ]
+
     if adversary == piece:
         adversary = 2  # Caso a peça seja do jogador, setamos o adversario para a IA (2)
 
     for r in range(KERNEL_SIZE):  # Verifica na horizontal a presença das peças
-        if np.count_nonzero(window[r, :] == piece) == 4:
-            score += 100
-        elif np.count_nonzero(window[r, :] == piece) == 3 and np.count_nonzero(window[r, :] == 0) == 1:
-            score += 5
-        elif np.count_nonzero(window[r, :] == piece) == 2 and np.count_nonzero(window[r, :] == 0) == 2:
-            score += 2
+        for cond, cond_score in conditions:
+            if np.count_nonzero(window[r, :] == piece) == cond[0] and np.count_nonzero(window[r, :] == 0) == cond[1]:
+                score += cond_score
 
-        if np.count_nonzero(window[r, :] == adversary) == 3 and np.count_nonzero(window[r, :] == 0) == 1:
-            score -= 4
+            if np.count_nonzero(window[r, :] == adversary) == cond[0] and \
+                    np.count_nonzero(window[r, :] == 0) == cond[1]:
+                score -= cond_score
 
-    for c in range(KERNEL_SIZE):  # Verifica na vertical a presença das peças
-        if np.count_nonzero(window[:, c] == piece) == 4:
-            score += 100
-        elif np.count_nonzero(window[:, c] == piece) == 3 and np.count_nonzero(window[:, c] == 0) == 1:
-            score += 5
-        elif np.count_nonzero(window[:, c] == piece) == 2 and np.count_nonzero(window[:, c] == 0) == 2:
-            score += 2
+    for c in range(KERNEL_SIZE):  # Verifica na horizontal a presença das peças
+        for cond, cond_score in conditions:
+            if np.count_nonzero(window[:, c] == piece) == cond[0] and np.count_nonzero(window[:, c] == 0) == cond[1]:
+                score += cond_score
 
-        if np.count_nonzero(window[:, c] == adversary) == 3 and np.count_nonzero(window[:, c] == 0) == 1:
-            score -= 4
-    # TODO: Adicionar a contagem de pontos para a diagonal
-    # https://numpy.org/doc/stable/reference/generated/numpy.diagonal.html
+            if np.count_nonzero(window[:, c] == adversary) == cond[0] and \
+                    np.count_nonzero(window[:, c] == 0) == cond[1]:
+                score -= cond_score
 
-    main_diagonal = window.diagonal()  # Diagonal principal
-    second_diagonal = np.fliplr(window).diagonal()  # Diagonal secundaria
+    diagonals = [window.diagonal(), np.fliplr(window).diagonal()]
 
-    if np.count_nonzero(main_diagonal == piece) == 4:
-        score += 100
-    elif np.count_nonzero(main_diagonal == piece) == 3 and np.count_nonzero(main_diagonal == 0) == 1:
-        score += 5
-    elif np.count_nonzero(main_diagonal == piece) == 2 and np.count_nonzero(main_diagonal == 0) == 2:
-        score += 2
-    if np.count_nonzero(main_diagonal == adversary) == 3 and np.count_nonzero(main_diagonal == 0) == 1:
-        score -= 4
+    for diagonal in diagonals:
+        for cond, cond_score in conditions:
+            if np.count_nonzero(diagonal == piece) == cond[0] and np.count_nonzero(diagonal == 0) == cond[1]:
+                score += cond_score
+            if np.count_nonzero(diagonal == adversary) == cond[0] and np.count_nonzero(diagonal == 0) == cond[1]:
+                score -= cond_score
 
-    if np.count_nonzero(second_diagonal == piece) == 4:
-        score += 100
-    elif np.count_nonzero(second_diagonal == piece) == 3 and np.count_nonzero(second_diagonal == 0) == 1:
-        score += 5
-    elif np.count_nonzero(second_diagonal == piece) == 2 and np.count_nonzero(second_diagonal == 0) == 2:
-        score += 2
-    if np.count_nonzero(second_diagonal == adversary) == 3 and np.count_nonzero(second_diagonal == 0) == 1:
-        score -= 4
-    print('f')
-
+    print(f'Score: {score}')
     return score
 
 
