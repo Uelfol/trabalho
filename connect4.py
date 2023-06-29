@@ -4,7 +4,7 @@ from os import system, name
 ROWS = 6
 COLUMNS = 7
 
-KERNEL_SIZE = 4  # Tamanho da janela que vai se mover pelo tabuleiro
+WINDOW_SIZE = 4  # Tamanho da janela que vai se mover pelo tabuleiro
 STRIDE = 1  # Passo com o qual a janela vai se mover
 
 
@@ -77,7 +77,7 @@ def window_score(window, piece):  # Baseado no conceito das sliding windows das 
     if adversary == piece:
         adversary = 2  # Caso a peça seja do jogador, setamos o adversario para a IA (2)
 
-    for r in range(KERNEL_SIZE):  # Verifica na horizontal a presença das peças
+    for r in range(WINDOW_SIZE):  # Verifica na horizontal a presença das peças
         for cond, cond_score in conditions:
             if np.count_nonzero(window[r, :] == piece) == cond[0] and np.count_nonzero(window[r, :] == 0) == cond[1]:
                 score += cond_score
@@ -86,7 +86,7 @@ def window_score(window, piece):  # Baseado no conceito das sliding windows das 
                     np.count_nonzero(window[r, :] == 0) == cond[1]:
                 score -= cond_score
 
-    for c in range(KERNEL_SIZE):  # Verifica na horizontal a presença das peças
+    for c in range(WINDOW_SIZE):  # Verifica na horizontal a presença das peças
         for cond, cond_score in conditions:
             if np.count_nonzero(window[:, c] == piece) == cond[0] and np.count_nonzero(window[:, c] == 0) == cond[1]:
                 score += cond_score
@@ -111,11 +111,11 @@ def window_score(window, piece):  # Baseado no conceito das sliding windows das 
 def sliding_windows(board, piece):
     score = 0
 
-    for r in range(ROWS - KERNEL_SIZE, -1, -STRIDE):
-        for c in range(0, COLUMNS - KERNEL_SIZE + 1, STRIDE):
-            window = board[r:r + KERNEL_SIZE, c:c + KERNEL_SIZE]
+    for r in range(ROWS - WINDOW_SIZE, -1, -STRIDE):
+        for c in range(0, COLUMNS - WINDOW_SIZE + 1, STRIDE):
+            window = board[r:r + WINDOW_SIZE, c:c + WINDOW_SIZE]
             score += window_score(window, piece)
-            # print('i')
+            print('i')
     return score
 
 
