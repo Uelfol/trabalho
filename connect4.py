@@ -170,9 +170,7 @@ def minimax_alpha_beta(board, depth, maximizing_player, alpha, beta):
         #return (None, evaluate(board))
 
     valid_locations = get_valid_locations(board)
-
-
-
+    
     if maximizing_player:
         value = -np.Inf
         column = np.random.choice(valid_locations)
