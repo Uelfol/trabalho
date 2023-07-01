@@ -1,6 +1,7 @@
 import numpy as np
 from os import system, name
 
+
 ROWS = 6
 COLUMNS = 7
 
@@ -63,6 +64,51 @@ def is_winning_move(board, piece):
                 return True
 
 
+# ----------------------------------------------------------------------------------
+def horizontal_score(window, piece, adversary, conditions):
+    score = 0
+
+    for r in range(WINDOW_SIZE):  # Verifica na horizontal a presença das peças
+        for cond, cond_score in conditions:
+            if np.count_nonzero(window[r, :] == piece) == cond[0] and np.count_nonzero(window[r, :] == 0) == cond[1]:
+                score += cond_score
+
+            if np.count_nonzero(window[r, :] == adversary) == cond[0] and \
+                    np.count_nonzero(window[r, :] == 0) == cond[1]:
+                score -= cond_score
+
+    return score
+
+
+def vertical_score(window, piece, adversary, conditions):
+    score = 0
+
+    for c in range(WINDOW_SIZE):  # Verifica na Vertical a presença das peças
+        for cond, cond_score in conditions:
+            if np.count_nonzero(window[:, c] == piece) == cond[0] and np.count_nonzero(window[:, c] == 0) == cond[1]:
+                score += cond_score
+
+            if np.count_nonzero(window[:, c] == adversary) == cond[0] and \
+                    np.count_nonzero(window[:, c] == 0) == cond[1]:
+                score -= cond_score
+
+    return score
+
+
+def diagonal_score(window, piece, adversary, conditions):
+    score = 0
+    diagonals = [window.diagonal(), np.fliplr(window).diagonal()]
+
+    for diagonal in diagonals:  # Verifica na Diagonal a presença das peças
+        for cond, cond_score in conditions:
+            if np.count_nonzero(diagonal == piece) == cond[0] and np.count_nonzero(diagonal == 0) == cond[1]:
+                score += cond_score
+            if np.count_nonzero(diagonal == adversary) == cond[0] and np.count_nonzero(diagonal == 0) == cond[1]:
+                score -= cond_score
+
+    return score
+
+
 def window_score(window, piece):  # Baseado no conceito das sliding windows das CNNs
     score = 0  # Vamos definir a pontuação de acordo com a quantidade de peças na janela
     adversary = 1  # Por padrão o adversario será o jogador
@@ -77,34 +123,11 @@ def window_score(window, piece):  # Baseado no conceito das sliding windows das 
     if adversary == piece:
         adversary = 2  # Caso a peça seja do jogador, setamos o adversario para a IA (2)
 
-    for r in range(WINDOW_SIZE):  # Verifica na horizontal a presença das peças
-        for cond, cond_score in conditions:
-            if np.count_nonzero(window[r, :] == piece) == cond[0] and np.count_nonzero(window[r, :] == 0) == cond[1]:
-                score += cond_score
+    score += horizontal_score(window, piece, adversary, conditions)
+    score += vertical_score(window, piece, adversary, conditions)
+    score += diagonal_score(window, piece, adversary, conditions)
 
-            if np.count_nonzero(window[r, :] == adversary) == cond[0] and \
-                    np.count_nonzero(window[r, :] == 0) == cond[1]:
-                score -= cond_score
-
-    for c in range(WINDOW_SIZE):  # Verifica na horizontal a presença das peças
-        for cond, cond_score in conditions:
-            if np.count_nonzero(window[:, c] == piece) == cond[0] and np.count_nonzero(window[:, c] == 0) == cond[1]:
-                score += cond_score
-
-            if np.count_nonzero(window[:, c] == adversary) == cond[0] and \
-                    np.count_nonzero(window[:, c] == 0) == cond[1]:
-                score -= cond_score
-
-    diagonals = [window.diagonal(), np.fliplr(window).diagonal()]
-
-    for diagonal in diagonals:
-        for cond, cond_score in conditions:
-            if np.count_nonzero(diagonal == piece) == cond[0] and np.count_nonzero(diagonal == 0) == cond[1]:
-                score += cond_score
-            if np.count_nonzero(diagonal == adversary) == cond[0] and np.count_nonzero(diagonal == 0) == cond[1]:
-                score -= cond_score
-
-    print(f'Score: {score}')
+    # print(f'Score: {score} ')
     return score
 
 
@@ -115,7 +138,7 @@ def sliding_windows(board, piece):
         for c in range(0, COLUMNS - WINDOW_SIZE + 1, STRIDE):
             window = board[r:r + WINDOW_SIZE, c:c + WINDOW_SIZE]
             score += window_score(window, piece)
-            print('i')
+
     return score
 
 
