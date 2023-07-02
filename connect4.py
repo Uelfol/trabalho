@@ -7,7 +7,6 @@ COLUMNS = 7
 WINDOW_SIZE = 4  # Tamanho da janela que vai se mover pelo tabuleiro
 STRIDE = 1  # Passo com o qual a janela vai se mover
 
-
 ALPHA = -np.Inf
 BETA = np.Inf
 STATES_EXPLORED = 0
@@ -268,3 +267,5 @@ while not game_over:
     print(" ")
     turn += 1
     turn = turn % 2
+
+print("Estados explorados:", STATES_EXPLORED)
