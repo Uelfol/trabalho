@@ -1,12 +1,15 @@
 import numpy as np
 from os import system, name
 
-
 ROWS = 6
 COLUMNS = 7
 
 WINDOW_SIZE = 4  # Tamanho da janela que vai se mover pelo tabuleiro
 STRIDE = 1  # Passo com o qual a janela vai se mover
+
+ALPHA = -np.Inf
+BETA = np.Inf
+STATES_EXPLORED = 0
 
 
 # ----------------------------------------------------------------------------------
@@ -64,7 +67,6 @@ def is_winning_move(board, piece):
                 return True
 
 
-# ----------------------------------------------------------------------------------
 def horizontal_score(window, piece, adversary, conditions):
     score = 0
 
@@ -172,6 +174,122 @@ def minimax(board, depth, maximizing_player):
         for col in valid_locations:
             temp_board = board.copy()
             drop_piece(temp_board, col, 1)
+            new_score = new_score = minimax(temp_board, depth - 1, True)[1]
+            if new_score < value:
+                value = new_score
+                column = col
+        return column, value
+
+
+# ----------------------------------------------------------------------------------
+def minimax_alpha_beta(board, depth, maximizing_player, alpha, beta):
+    global STATES_EXPLORED
+    global ALPHA
+    global BETA
+
+    if is_winning_move(board, 2):  # IA ganhou
+        return (None, 100)
+    elif is_winning_move(board, 1):  # jogador humano ganhou
+        return (None, -100)
+    elif len(get_valid_locations(board)) == 0:  # jogo empatado
+        return (None, 0)
+
+
+    # Heuristica
+    elif depth == 0:  # profundidade máxima atingida
+        # return (None, 0)
+        # return (None, evaluate(board))
+        return (None, sliding_windows(board, 2))
+
+
+    valid_locations = get_valid_locations(board)
+
+    if maximizing_player:
+        value = -np.Inf
+        column = np.random.choice(valid_locations)
+        for col in valid_locations:
+            temp_board = board.copy()
+            drop_piece(temp_board, col, 2)
+
+            STATES_EXPLORED += 1
+
+            new_score = minimax_alpha_beta(temp_board, depth - 1, False, ALPHA, BETA)[1]
+            if new_score > value:
+                value = new_score
+                column = col
+
+            ###############################################
+            ALPHA = max(ALPHA, value)
+            if ALPHA >= BETA:
+                print("Alpha: ", ALPHA, " Beta", BETA)
+                break
+            ###############################################
+
+        return column, value
+
+    else:  # minimizing player
+        value = np.Inf
+        column = np.random.choice(valid_locations)
+        for col in valid_locations:
+            temp_board = board.copy()
+            drop_piece(temp_board, col, 1)
+
+            STATES_EXPLORED += 1
+
+            new_score = minimax_alpha_beta(temp_board, depth - 1, True, ALPHA, BETA)[1]
+            if new_score < value:
+                value = new_score
+                column = col
+
+            ###############################################
+            BETA = min(BETA, value)
+            if ALPHA >= BETA:
+                print("Alpha: ", ALPHA, " Beta", BETA)
+                break
+            ###############################################
+
+        return column, value
+
+
+# -----------------------------------------------------------------------------------
+def minimax_og(board, depth, maximizing_player):
+    global STATES_EXPLORED
+
+    if is_winning_move(board, 2):  # IA ganhou
+        return (None, 100)
+    elif is_winning_move(board, 1):  # jogador humano ganhou
+        return (None, -100)
+    elif len(get_valid_locations(board)) == 0:  # jogo empatado
+        return (None, 0)
+
+    '''
+    # Heuristica
+    elif depth == 0:  # profundidade máxima atingida
+        return (None, 0)
+    '''
+
+    valid_locations = get_valid_locations(board)
+
+    if maximizing_player:
+        value = -np.Inf
+        column = np.random.choice(valid_locations)
+        for col in valid_locations:
+            temp_board = board.copy()
+            drop_piece(temp_board, col, 2)
+            STATES_EXPLORED += 1
+            new_score = minimax(temp_board, depth - 1, False)[1]
+            if new_score > value:
+                value = new_score
+                column = col
+        return column, value
+
+    else:  # minimizing player
+        value = np.Inf
+        column = np.random.choice(valid_locations)
+        for col in valid_locations:
+            temp_board = board.copy()
+            drop_piece(temp_board, col, 1)
+            STATES_EXPLORED += 1
             new_score = minimax(temp_board, depth - 1, True)[1]
             if new_score < value:
                 value = new_score
@@ -210,7 +328,8 @@ while not game_over:
 
     # Movimento da IA
     else:
-        col, minimax_score = minimax(board, 4, True)  # A profundidade máxima da árvore é 4
+        # col, minimax_score = minimax(board, 4, True)  # A profundidade máxima da árvore é 4
+        col, minimax_score = minimax_alpha_beta(board, 4, True, ALPHA, BETA)
         if valid_location(board, col):
             drop_piece(board, col, 2)
             if is_winning_move(board, 2):
@@ -221,3 +340,5 @@ while not game_over:
     print(" ")
     turn += 1
     turn = turn % 2
+
+print("Estados explorados:", STATES_EXPLORED)
