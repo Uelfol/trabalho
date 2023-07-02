@@ -7,6 +7,8 @@ COLUMNS = 7
 WINDOW_SIZE = 4  # Tamanho da janela que vai se mover pelo tabuleiro
 STRIDE = 1  # Passo com o qual a janela vai se mover
 
+alpha = -np.Inf
+beta = np.Inf
 
 # ----------------------------------------------------------------------------------
 def clear():
@@ -137,7 +139,7 @@ def minimax(board, depth, maximizing_player):
         for col in valid_locations:
             temp_board = board.copy()
             drop_piece(temp_board, col, 2)
-            new_score = minimax(temp_board, depth - 1, False)[1]
+            minimax_alpha_beta(temp_board, depth - 1, False, alpha, beta)[1]
             if new_score > value:
                 value = new_score
                 column = col
@@ -149,7 +151,7 @@ def minimax(board, depth, maximizing_player):
         for col in valid_locations:
             temp_board = board.copy()
             drop_piece(temp_board, col, 1)
-            new_score = minimax(temp_board, depth - 1, True)[1]
+            new_score = minimax_alpha_beta(temp_board, depth - 1, True, alpha, beta)[1]
             if new_score < value:
                 value = new_score
                 column = col
@@ -240,7 +242,7 @@ while not game_over:
     # Movimento da IA
     else:
         # col, minimax_score = minimax(board, 4, True)  # A profundidade máxima da árvore é 4
-        col, minimax_score = minimax_alpha_beta(board, 4, True, -np.Inf, np.Inf)
+        col, minimax_score = minimax_alpha_beta(board, 4, True, alpha, beta)
         if valid_location(board, col):
             drop_piece(board, col, 2)
             if is_winning_move(board, 2):
