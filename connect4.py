@@ -187,7 +187,7 @@ def minimax_alpha_beta(board, depth, maximizing_player, alpha, beta):
 
             STATES_EXPLORED += 1
 
-            new_score = minimax_alpha_beta(temp_board, depth - 1, False,ALPHA,BETA)[1]
+            new_score = minimax_alpha_beta(temp_board, depth - 1, False, ALPHA, BETA)[1]
             if new_score > value:
                 value = new_score
                 column = col
@@ -211,7 +211,7 @@ def minimax_alpha_beta(board, depth, maximizing_player, alpha, beta):
 
             STATES_EXPLORED += 1
 
-            new_score = minimax_alpha_beta(temp_board, depth - 1, True,ALPHA,BETA)[1]
+            new_score = minimax_alpha_beta(temp_board, depth - 1, True, ALPHA, BETA)[1]
             if new_score < value:
                 value = new_score
                 column = col
