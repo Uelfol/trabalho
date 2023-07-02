@@ -296,7 +296,7 @@ while not game_over:
     # Movimento da IA
     else:
         # col, minimax_score = minimax(board, 4, True)  # A profundidade máxima da árvore é 4
-        col, minimax_score = minimax_alpha_beta(board, 4, True, alpha, beta)
+        col, minimax_score = minimax_alpha_beta(board, 4, True, ALPHA,BETA)
         if valid_location(board, col):
             drop_piece(board, col, 2)
             if is_winning_move(board, 2):
