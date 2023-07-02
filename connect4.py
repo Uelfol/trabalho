@@ -170,11 +170,13 @@ def minimax_alpha_beta(board, depth, maximizing_player, alpha, beta):
     elif len(get_valid_locations(board)) == 0:  # jogo empatado
         return (None, 0)
 
+    '''
     # Heuristica
     elif depth == 0:  # profundidade máxima atingida
         return (None, 0)
         #return (None, evaluate(board))
-
+    '''
+    
     valid_locations = get_valid_locations(board)
 
     if maximizing_player:
@@ -234,11 +236,11 @@ def minimax_og(board, depth, maximizing_player):
     elif len(get_valid_locations(board)) == 0:  # jogo empatado
         return (None, 0)
 
-    ```
+    '''
     # Heuristica
     elif depth == 0:  # profundidade máxima atingida
         return (None, 0)
-    ```
+    '''
     
     valid_locations = get_valid_locations(board)
 
