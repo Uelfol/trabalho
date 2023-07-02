@@ -7,8 +7,10 @@ COLUMNS = 7
 WINDOW_SIZE = 4  # Tamanho da janela que vai se mover pelo tabuleiro
 STRIDE = 1  # Passo com o qual a janela vai se mover
 
-alpha = -np.Inf
-beta = np.Inf
+
+ALPHA = -np.Inf
+BETA = np.Inf
+STATES_EXPLORED = 0
 
 # ----------------------------------------------------------------------------------
 def clear():
@@ -159,6 +161,10 @@ def minimax(board, depth, maximizing_player):
         
 # ----------------------------------------------------------------------------------
 def minimax_alpha_beta(board, depth, maximizing_player, alpha, beta):
+    global STATES_EXPLORED
+    global ALPHA
+    global BETA
+
     if is_winning_move(board, 2):  # IA ganhou
         return (None, 100)
     elif is_winning_move(board, 1):  # jogador humano ganhou
@@ -172,21 +178,25 @@ def minimax_alpha_beta(board, depth, maximizing_player, alpha, beta):
         #return (None, evaluate(board))
 
     valid_locations = get_valid_locations(board)
-    
+
     if maximizing_player:
         value = -np.Inf
         column = np.random.choice(valid_locations)
         for col in valid_locations:
             temp_board = board.copy()
             drop_piece(temp_board, col, 2)
-            new_score = minimax(temp_board, depth - 1, False)[1]
+
+            STATES_EXPLORED += 1
+
+            new_score = minimax_alpha_beta(temp_board, depth - 1, False,ALPHA,BETA)[1]
             if new_score > value:
                 value = new_score
                 column = col
 
             ###############################################
-            alpha = max(alpha, value)
-            if alpha >= beta:
+            ALPHA = max(ALPHA, value)
+            if ALPHA >= BETA:
+                print("Alpha: ", ALPHA, " Beta", BETA)
                 break
             ###############################################
 
@@ -198,14 +208,19 @@ def minimax_alpha_beta(board, depth, maximizing_player, alpha, beta):
         for col in valid_locations:
             temp_board = board.copy()
             drop_piece(temp_board, col, 1)
-            new_score = minimax(temp_board, depth - 1, True)[1]
+
+
+            STATES_EXPLORED += 1
+
+            new_score = minimax_alpha_beta(temp_board, depth - 1, True,ALPHA,BETA)[1]
             if new_score < value:
                 value = new_score
                 column = col
 
             ###############################################
-            beta = min(beta, value)
-            if alpha >= beta:
+            BETA = min(BETA, value)
+            if ALPHA >= BETA:
+                print("Alpha: ", ALPHA, " Beta", BETA)
                 break
             ###############################################
 
