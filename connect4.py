@@ -121,7 +121,6 @@ def sliding_windows(board, piece):
             print('i')
     return score
 
-
 # ----------------------------------------------------------------------------------
 def minimax(board, depth, maximizing_player):
     if is_winning_move(board, 2):  # IA ganhou
@@ -224,7 +223,48 @@ def minimax_alpha_beta(board, depth, maximizing_player, alpha, beta):
             ###############################################
 
         return column, value
+#-----------------------------------------------------------------------------------
+def minimax_og(board, depth, maximizing_player):
+    global STATES_EXPLORED
 
+    if is_winning_move(board, 2):  # IA ganhou
+        return (None, 100)
+    elif is_winning_move(board, 1):  # jogador humano ganhou
+        return (None, -100)
+    elif len(get_valid_locations(board)) == 0:  # jogo empatado
+        return (None, 0)
+
+    # Heuristica
+    elif depth == 0:  # profundidade máxima atingida
+        return (None, 0)
+
+    valid_locations = get_valid_locations(board)
+
+    if maximizing_player:
+        value = -np.Inf
+        column = np.random.choice(valid_locations)
+        for col in valid_locations:
+            temp_board = board.copy()
+            drop_piece(temp_board, col, 2)
+            STATES_EXPLORED += 1
+            new_score = minimax(temp_board, depth - 1, False)[1]
+            if new_score > value:
+                value = new_score
+                column = col
+        return column, value
+
+    else:  # minimizing player
+        value = np.Inf
+        column = np.random.choice(valid_locations)
+        for col in valid_locations:
+            temp_board = board.copy()
+            drop_piece(temp_board, col, 1)
+            STATES_EXPLORED += 1
+            new_score = minimax(temp_board, depth - 1, True)[1]
+            if new_score < value:
+                value = new_score
+                column = col
+        return column, value
 # ----------------------------------------------------------------------------------
 def get_valid_locations(board):
     valid_locations = []
