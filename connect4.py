@@ -262,11 +262,11 @@ def minimax_og(board, depth, maximizing_player):
     elif len(get_valid_locations(board)) == 0:  # jogo empatado
         return (None, 0)
 
-    '''
     # Heuristica
     elif depth == 0:  # profundidade máxima atingida
-        return (None, 0)
-    '''
+        # return (None, 0)
+        # return (None, evaluate(board))
+        return (None, sliding_windows(board, 2))
 
     valid_locations = get_valid_locations(board)
 
@@ -328,8 +328,8 @@ while not game_over:
 
     # Movimento da IA
     else:
-        # col, minimax_score = minimax(board, 4, True)  # A profundidade máxima da árvore é 4
-        col, minimax_score = minimax_alpha_beta(board, 4, True, ALPHA, BETA)
+        col, minimax_score = minimax_og(board, 4, True)  # A profundidade máxima da árvore é 4
+        # col, minimax_score = minimax_alpha_beta(board, 4, True, ALPHA, BETA)
         if valid_location(board, col):
             drop_piece(board, col, 2)
             if is_winning_move(board, 2):
