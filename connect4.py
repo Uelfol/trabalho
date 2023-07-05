@@ -136,9 +136,11 @@ def window_score(window, piece):  # Baseado no conceito das sliding windows das 
 def sliding_windows(board, piece):
     score = 0
 
-    for r in range(ROWS - WINDOW_SIZE, -1, -STRIDE):
-        for c in range(0, COLUMNS - WINDOW_SIZE + 1, STRIDE):
+    for c in range(0, COLUMNS - WINDOW_SIZE + 1, STRIDE):
+        for r in range(ROWS - WINDOW_SIZE, -1, -STRIDE):
             window = board[r:r + WINDOW_SIZE, c:c + WINDOW_SIZE]
+            if np.count_nonzero(window[0, :] == 0) == WINDOW_SIZE:
+                break
             score += window_score(window, piece)
 
     return score
