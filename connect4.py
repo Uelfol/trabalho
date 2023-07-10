@@ -1,4 +1,5 @@
 import numpy as np
+import time
 from os import system, name
 
 ROWS = 6
@@ -10,6 +11,8 @@ STRIDE = 1  # Passo com o qual a janela vai se mover
 ALPHA = -np.Inf
 BETA = np.Inf
 STATES_EXPLORED = 0
+
+TOTAL_AI_TIME = []
 
 
 # ----------------------------------------------------------------------------------
@@ -330,6 +333,7 @@ while not game_over:
 
     # Movimento da IA
     else:
+        time_start = time.time()
         col, minimax_score = minimax_og(board, 4, True)  # A profundidade máxima da árvore é 4
         # col, minimax_score = minimax_alpha_beta(board, 4, True, ALPHA, BETA)
         if valid_location(board, col):
@@ -337,6 +341,10 @@ while not game_over:
             if is_winning_move(board, 2):
                 print("Jogador 2 Vence!!!")
                 game_over = True
+        time_end = time.time()
+        play_time = time_end - time_start
+        print(f"A joga da IA demorou {play_time:.4f} segundos.")
+        TOTAL_AI_TIME.append(play_time)
 
     print(board)
     print(" ")
@@ -344,3 +352,4 @@ while not game_over:
     turn = turn % 2
 
 print("Estados explorados:", STATES_EXPLORED)
+print(f"Tempo de jogo total da IA: {np.sum(TOTAL_AI_TIME):.4f} segundos")
