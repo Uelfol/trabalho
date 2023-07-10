@@ -202,8 +202,6 @@ def minimax_alpha_beta(board, depth, maximizing_player, alpha, beta):
 
     # Heuristica
     elif depth == 0:  # profundidade máxima atingida
-        # return (None, 0)
-        # return (None, evaluate(board))
         return (None, sliding_windows(board, 2))
 
 
@@ -269,8 +267,6 @@ def minimax_og(board, depth, maximizing_player):
 
     # Heuristica
     elif depth == 0:  # profundidade máxima atingida
-        # return (None, 0)
-        # return (None, evaluate(board))
         return (None, sliding_windows(board, 2))
 
     valid_locations = get_valid_locations(board)
@@ -334,8 +330,8 @@ while not game_over:
     # Movimento da IA
     else:
         time_start = time.time()
-        col, minimax_score = minimax_og(board, 4, True)  # A profundidade máxima da árvore é 4
-        # col, minimax_score = minimax_alpha_beta(board, 4, True, ALPHA, BETA)
+        # col, minimax_score = minimax_og(board, 4, True)  # A profundidade máxima da árvore é 4
+        col, minimax_score = minimax_alpha_beta(board, 4, True, ALPHA, BETA)
         if valid_location(board, col):
             drop_piece(board, col, 2)
             if is_winning_move(board, 2):
@@ -343,7 +339,7 @@ while not game_over:
                 game_over = True
         time_end = time.time()
         play_time = time_end - time_start
-        print(f"A joga da IA demorou {play_time:.4f} segundos.")
+        print(f"A joga da IA demorou {play_time:.6f} segundos.")
         TOTAL_AI_TIME.append(play_time)
 
     print(board)
@@ -352,4 +348,4 @@ while not game_over:
     turn = turn % 2
 
 print("Estados explorados:", STATES_EXPLORED)
-print(f"Tempo de jogo total da IA: {np.sum(TOTAL_AI_TIME):.4f} segundos")
+print(f"Tempo de jogo total da IA: {np.sum(TOTAL_AI_TIME):.6f} segundos")
