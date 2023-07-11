@@ -339,7 +339,7 @@ while not game_over:
                 game_over = True
         time_end = time.time()
         play_time = time_end - time_start
-        print(f"A joga da IA demorou {play_time:.6f} segundos.")
+        print(f"A jogada da IA demorou {play_time:.6f} segundos.")
         TOTAL_AI_TIME.append(play_time)
 
     print(board)
