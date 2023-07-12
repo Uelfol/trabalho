@@ -320,7 +320,7 @@ clear()
 while not game_over:
     # Movimento do Jogador 1
     if turn == 0:
-        col = int(input("Jogador 1, selecione a coluna (0-6):"))
+        col = int(input(f"Jogador 1, selecione a coluna (0-{COLUMNS-1}):"))
         if valid_location(board, col):
             drop_piece(board, col, 1)
             if is_winning_move(board, 1):
